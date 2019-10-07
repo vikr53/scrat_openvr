@@ -32,6 +32,13 @@ a = -b*(y_point[1]/y_point[0])
 d = 6/(y_point[1] - ((y_point[0]*x_point[1])/x_point[0]))
 c = -d*(x_point[1]/x_point[0])
 
+input("Press ENTER when you want to start recording the data")
+start_time = time.time()
+
+file = open("data.csv", "w")
+
+file.write("x(ft), y(ft), theta(degrees), time(s)")
+
 while(True):
     start = time.time()
     txt = ""
@@ -40,6 +47,9 @@ while(True):
     x = (sensor_reading["x"]-origin[0])*a + (sensor_reading["y"]-origin[2])*b
     y = (sensor_reading["x"]-origin[0])*c + (sensor_reading["y"]-origin[2])*d
     theta = sensor_reading["theta"] - origin[4]
+    theta = (theta + 360)%360
+    current_time = time.time()-start_time
+    file.write(str(x)+", " str(y) + ", " + str(theta) + ", " + str(time))
     for each in [x,y,theta]:
         txt += "%.4f" % each
         txt += " "
