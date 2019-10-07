@@ -1,16 +1,11 @@
 import triad_openvr
 import time
 import sys
-import signal, os
-
-def handler(signum, frame):
-    print('Signal handler called with signal', signum)
-    raise OSError("Couldn't open device!")
 
 v = triad_openvr.triad_openvr()
 v.print_discovered_objects()
 
-interval = 1/1000
+interval = 1/100
 
 origin = list()
 a = float()
@@ -34,13 +29,17 @@ c = -d*(x_point[1]/x_point[0])
 
 input("Press ENTER when you want to start recording the data")
 start_time = time.time()
-
+start_time2 = start_time
 file = open("data.csv", "w")
 
-file.write("x(ft), y(ft), theta(degrees), time(s)")
+file.write("x(ft), y(ft), theta(degrees), time(s)" + "\n")
 
 while(True):
-    start = time.time()
+    if time.time() - start_time2 < interval:
+        continue
+    else:
+        start_time2 += interval
+
     txt = ""
     point = v.devices["tracker_1"].get_pose_euler()
     sensor_reading = {"x": point[0], "y": point[2], "theta": point[4]}
@@ -49,11 +48,4 @@ while(True):
     theta = sensor_reading["theta"] - origin[4]
     theta = (theta + 360)%360
     current_time = time.time()-start_time
-    file.write(str(x)+", " str(y) + ", " + str(theta) + ", " + str(time))
-    for each in [x,y,theta]:
-        txt += "%.4f" % each
-        txt += " "
-    print("\r" + txt, end="")
-    sleep_time = interval-(time.time()-start)
-    if sleep_time>0:
-        time.sleep(sleep_time)
+    file.write(str(x)+", " + str(y) + ", " + str(theta) + ", " + str(current_time) + "\n")
