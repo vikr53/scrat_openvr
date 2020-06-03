@@ -33,6 +33,7 @@ start_time2 = start_time
 file = open("data.csv", "w")
 
 file.write("x(ft), y(ft), theta(degrees), time(s)" + "\n")
+print("Recording Data")
 
 while(True):
     if time.time() - start_time2 < interval:
